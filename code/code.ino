@@ -24,6 +24,10 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass our oneWire reference to Dallas Temperature.
 DallasTemperature sensors(&oneWire);
 
+bool isIdentifying = false;
+
+String macAdr = "";
+
 const int MotionSensorSignal = 5;  // Digital port for the motion sensor
 int motionSensorValue = 0;
 
@@ -96,6 +100,33 @@ void setupLEDs() {
   pinMode(ledGreenPin, OUTPUT);
 }
 
+void getIsIdentifying() {
+
+  isIdentifying = Firebase.getBool("sensors/" + macAdr + "/isIdentifying");
+
+  while(Firebase.getBool("sensors/" + macAdr + "/isIdentifying")){
+    blinkLED(ledGreenPin);
+    delay(500);
+    }
+  
+}
+
+void createSensorEntry() {
+
+ Firebase.setBool("sensors/" + macAdr + "/isIdentifying", isIdentifying);
+ Firebase.setString("sensors/" + macAdr + "/name", macAdr);
+
+if(Firebase.success()){
+  Serial.println("Firebase push success!");
+  blinkLED(ledGreenPin);
+ }
+ else if(Firebase.failed()){
+  Serial.println("Firebase push failed!");
+  blinkLED(ledRedPin);
+ }
+  
+}
+
 ///////////////////////////////////////////
 
 void setup() {
@@ -104,11 +135,17 @@ void setup() {
  connectToWifi();
  connectToFirebase();
 
+ macAdr = WiFi.macAddress();
+
+createSensorEntry();
+
  pinMode(MotionSensorSignal, INPUT); // declare digital pin 2 as input, this is where you connect the S output from your sensor, this can be any digital pin
  sensors.begin();
 }
 
 void loop() {
+ getIsIdentifying();
+  
  sensorLoop();
 
  if(tempSensorValue < -50) {
@@ -125,7 +162,7 @@ void loop() {
  temperatureObject["temperature"] = tempSensorValue;
  tempTime[".sv"] = "timestamp";
 
- Firebase.push("sensors/300", temperatureObject);
+ Firebase.push("measurements/" + macAdr, temperatureObject);
  if(Firebase.success()){
   Serial.println("Firebase push success!");
   blinkLED(ledGreenPin);
