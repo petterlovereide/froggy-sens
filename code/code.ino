@@ -9,13 +9,8 @@
 #define WIFI_SSID "HACKERMAN"
 #define WIFI_PASSWORD "RaspBerryPi19"
 
-#define BUILDING "Voksenåsen Hotell"
-#define SENSORID "100"
-
 // Data wire is plugged into pin 2 on the Arduino
 #define ONE_WIRE_BUS 0
-
-///////////////////////////////////////////
 
 // Setup a oneWire instance to communicate with any OneWire devices
 // (not just Maxim/Dallas temperature ICs)
@@ -29,12 +24,11 @@ bool isIdentifying = false;
 String macAdr = "";
 
 const int MotionSensorSignal = 5;  // Digital port for the motion sensor
-int motionSensorValue = 0;
-
-float tempSensorValue = 0.0;
-
 const int LightSensorSignal = A0;  // Pin for Analog Output - AO
+
 float lightSensorValue = 0.0;
+float tempSensorValue = 0.0;
+int motionSensorValue = 0;
 
 // Led Lights
 int ledRedPin = 4;
@@ -74,10 +68,12 @@ void blinkLED(int pin){
 void connectToWifi() {
  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
  Serial.print("Connecting to WIFI");
+ 
  while (WiFi.status() != WL_CONNECTED) {
    Serial.print(".");
    blinkLED(ledRedPin);
  }
+ 
  Serial.println();
  Serial.print("Connected with IP: ");
  Serial.println(WiFi.localIP());
