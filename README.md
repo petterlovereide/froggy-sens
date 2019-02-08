@@ -1,4 +1,13 @@
-# froggy-sens
+# froggy-sense
+A project created as part of Knowit miljøhack 2019.
+
+[froggy-dash](https://github.com/kievu/froggy-dash)
+
+## Goal
+Reduce energy waste in buildings owned by Statsbygg.
+
+## Team
+We are mixed group consisting developers, UX-designer and business analyst with the urge of creating a solution for a better environment.
 
 ## Docs
 
