@@ -1,3 +1,4 @@
+s
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
 
@@ -101,22 +102,23 @@ void setupLEDs() {
 }
 
 void getIsIdentifying() {
-
   isIdentifying = Firebase.getBool("sensors/" + macAdr + "/isIdentifying");
 
   while(Firebase.getBool("sensors/" + macAdr + "/isIdentifying")){
     blinkLED(ledGreenPin);
     delay(500);
-    }
-  
+  }
 }
 
 void createSensorEntry() {
-
  Firebase.setBool("sensors/" + macAdr + "/isIdentifying", isIdentifying);
- Firebase.setString("sensors/" + macAdr + "/name", macAdr);
+ 
+ Firebase.getString("sensors/" + macAdr + "/name");
+ if(Firebase.failed()){
+   Firebase.setString("sensors/" + macAdr + "/name", macAdr);
+ }
 
-if(Firebase.success()){
+ if(Firebase.success()){
   Serial.println("Firebase push success!");
   blinkLED(ledGreenPin);
  }
@@ -124,7 +126,6 @@ if(Firebase.success()){
   Serial.println("Firebase push failed!");
   blinkLED(ledRedPin);
  }
-  
 }
 
 ///////////////////////////////////////////
@@ -137,7 +138,7 @@ void setup() {
 
  macAdr = WiFi.macAddress();
 
-createSensorEntry();
+ createSensorEntry();
 
  pinMode(MotionSensorSignal, INPUT); // declare digital pin 2 as input, this is where you connect the S output from your sensor, this can be any digital pin
  sensors.begin();
